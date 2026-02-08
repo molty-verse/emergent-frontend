@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,7 +22,11 @@ import {
   Users,
   Key,
   FileText,
+  Power,
 } from 'lucide-react'
+
+// Status types: 'online' | 'booting' | 'offline'
+type MoltyStatus = 'online' | 'booting' | 'offline'
 
 // Mock data for Moltys
 const moltysData = [
@@ -30,31 +34,119 @@ const moltysData = [
     id: '1', 
     name: 'Orange Oliver', 
     image: '/moltys/molty-orange.png', 
-    status: 'online',
+    status: 'online' as MoltyStatus,
     description: 'Helping founders turn ideas into sustainable businesses. Inspired by the strategic thinking of top entrepreneurs.',
   },
   { 
     id: '2', 
     name: 'Lemon Lea', 
     image: '/moltys/molty-lemon.png', 
-    status: 'online',
+    status: 'booting' as MoltyStatus,
     description: 'Crafting brand identities that resonate and endure. A creative force with an eye for design.',
   },
   { 
     id: '3', 
     name: 'Fig Francesca', 
     image: '/moltys/molty-fig.png', 
-    status: 'away',
+    status: 'offline' as MoltyStatus,
     description: 'Scaling startups from zero to one, one experiment at a time. Data-driven and growth-obsessed.',
   },
   { 
     id: '4', 
     name: 'Persimmon Pete', 
     image: '/moltys/molty-persimmon.png', 
-    status: 'online',
+    status: 'online' as MoltyStatus,
     description: 'Making complex systems simple and beautiful. Your guide through the technical wilderness.',
   },
 ]
+
+// Status indicator component with expand animation
+function StatusIndicator({ 
+  status, 
+  size = 'small',
+  borderColor = '#121413'
+}: { 
+  status: MoltyStatus
+  size?: 'small' | 'large'
+  borderColor?: string
+}) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showText, setShowText] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const prevStatusRef = useRef(status)
+
+  const statusConfig = {
+    online: { color: 'bg-[#8b9a72]', text: 'Online', textColor: 'text-[#8b9a72]' },
+    booting: { color: 'bg-[#daa06d]', text: 'Booting', textColor: 'text-[#daa06d]' },
+    offline: { color: 'bg-[#686460]', text: 'Offline', textColor: 'text-[#686460]' },
+  }
+
+  const config = statusConfig[status]
+  const dotSize = size === 'large' ? 'w-4 h-4' : 'w-3 h-3'
+  const borderWidth = size === 'large' ? 'border-[3px]' : 'border-2'
+
+  const triggerAnimation = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setIsExpanded(true)
+    setShowText(true)
+    timeoutRef.current = setTimeout(() => {
+      setIsExpanded(false)
+      setTimeout(() => setShowText(false), 300)
+    }, 3000)
+  }
+
+  // Trigger animation on status change
+  useEffect(() => {
+    if (prevStatusRef.current !== status) {
+      triggerAnimation()
+      prevStatusRef.current = status
+    }
+  }, [status])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    <div 
+      className="relative cursor-pointer"
+      onMouseEnter={triggerAnimation}
+    >
+      <div 
+        className={`
+          flex items-center rounded-full transition-all duration-300 ease-out overflow-hidden
+          ${borderWidth}
+          ${isExpanded ? 'pr-2 pl-1' : 'pr-0 pl-0'}
+        `}
+        style={{ 
+          borderColor,
+          backgroundColor: isExpanded ? borderColor : 'transparent',
+        }}
+      >
+        <div className={`${dotSize} rounded-full ${config.color} flex-shrink-0 ${status === 'booting' ? 'animate-pulse' : ''}`} />
+        <div 
+          className={`
+            overflow-hidden transition-all duration-300 ease-out
+            ${isExpanded ? 'max-w-[60px] ml-1.5 opacity-100' : 'max-w-0 ml-0 opacity-0'}
+          `}
+        >
+          {showText && (
+            <span className={`text-[10px] font-medium font-[family-name:var(--font-body)] whitespace-nowrap ${config.textColor}`}>
+              {config.text}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // Mock messages
 const mockMessages = [
@@ -167,7 +259,7 @@ export default function AppPage() {
                       </div>
                       {/* Status indicator */}
                       <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#1a2420] ${
-                        molty.status === 'online' ? 'bg-[#8b9a72]' : 'bg-[#c4a870]'
+                        molty.status === 'online' ? 'bg-[#8b9a72]' : molty.status === 'booting' ? 'bg-[#daa06d] animate-pulse' : 'bg-[#686460]'
                       }`} />
                     </div>
                     {!sidebarCollapsed && (
@@ -221,7 +313,7 @@ export default function AppPage() {
                     <Image src={selectedMolty.image} alt={selectedMolty.name} width={40} height={40} className="w-full h-full object-cover" />
                   </div>
                   <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#151816] ${
-                    selectedMolty.status === 'online' ? 'bg-[#8b9a72]' : 'bg-[#c4a870]'
+                    selectedMolty.status === 'online' ? 'bg-[#8b9a72]' : selectedMolty.status === 'booting' ? 'bg-[#daa06d] animate-pulse' : 'bg-[#686460]'
                   }`} />
                 </div>
                 <h2 className="font-[family-name:var(--font-display)] font-semibold text-[#f0ebe4]">{selectedMolty.name}</h2>
@@ -314,14 +406,25 @@ export default function AppPage() {
                       <Image src={selectedMolty.image} alt={selectedMolty.name} width={128} height={128} className="w-full h-full object-cover" />
                     </div>
                     {/* Status indicator on avatar */}
-                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-[3px] border-[#121413] ${
-                      selectedMolty.status === 'online' ? 'bg-[#8b9a72]' : 'bg-[#c4a870]'
-                    }`} />
+                    <div className="absolute -bottom-1 -right-1">
+                      <StatusIndicator status={selectedMolty.status} size="large" borderColor="#121413" />
+                    </div>
                   </div>
                   <div className="flex items-center gap-1.5 mb-4">
                     <h3 className="font-[family-name:var(--font-display)] text-xl font-semibold text-[#f0ebe4]">{selectedMolty.name}</h3>
                     <Button variant="ghost" size="icon" className="w-7 h-7 text-[#686460] hover:text-[#f0ebe4] hover:bg-white/[0.04]">
                       <Pencil className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className={`w-7 h-7 transition-all ${
+                        selectedMolty.status === 'offline' 
+                          ? 'text-[#8b9a72] hover:text-[#8b9a72] hover:bg-[#8b9a72]/10' 
+                          : 'text-[#686460] hover:text-red-400 hover:bg-red-400/10'
+                      }`}
+                    >
+                      <Power className="w-3.5 h-3.5" />
                     </Button>
                   </div>
                   <Button className="w-full bg-[#daa06d]/10 hover:bg-[#daa06d]/20 text-[#daa06d] border border-[#daa06d]/20 hover:border-[#daa06d]/30 transition-all rounded-xl h-10 font-[family-name:var(--font-body)] font-medium">
