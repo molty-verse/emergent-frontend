@@ -279,16 +279,6 @@ export default function AppPage() {
                   </span>
                 </div>
               )}
-              {sidebarCollapsed && (
-                <div className="mx-auto w-8 h-8 rounded-lg bg-gradient-to-br from-[#daa06d] to-[#c4846a] flex items-center justify-center shadow-[0_2px_8px_rgba(218,160,109,0.3)]">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="6" fill="#151816" fillOpacity="0.9"/>
-                    <circle cx="10" cy="7" r="1.5" fill="#f0ebe4"/>
-                    <circle cx="14" cy="7" r="1.5" fill="#f0ebe4"/>
-                    <path d="M10 10 Q12 12 14 10" stroke="#f0ebe4" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
-                  </svg>
-                </div>
-              )}
               <Button 
                 variant="ghost" 
                 size="icon"
