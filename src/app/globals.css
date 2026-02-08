@@ -266,3 +266,34 @@
     font-family: var(--font-mono), monospace;
   }
 }
+
+/* ========== CUSTOM SCROLLBAR (ShadCN-style) ========== */
+
+@layer utilities {
+  .scrollbar-styled {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 9999px;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+    background-clip: content-box;
+  }
+}

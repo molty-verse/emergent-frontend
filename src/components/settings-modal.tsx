@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { Eye, EyeOff, AlertTriangle, Check, ExternalLink, Sparkles, Twitter } from "lucide-react"
 import {
   Dialog,
@@ -21,25 +21,7 @@ interface SettingsModalProps {
 type PlanTier = 'free' | 'pro'
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
-  // #region agent log
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => {
-        const scrollArea = scrollAreaRef.current
-        const dialogContent = document.querySelector('[data-slot="dialog-content"]') as HTMLElement
-        const logData1 = {location:'settings-modal.tsx:useEffect',message:'Dialog dimensions',data:{dialogContentHeight:dialogContent?.offsetHeight,dialogContentScrollHeight:dialogContent?.scrollHeight,dialogContentComputedHeight:dialogContent ? getComputedStyle(dialogContent).height : null,dialogContentComputedMaxHeight:dialogContent ? getComputedStyle(dialogContent).maxHeight : null,dialogContentComputedDisplay:dialogContent ? getComputedStyle(dialogContent).display : null,scrollAreaHeight:scrollArea?.offsetHeight,scrollAreaScrollHeight:scrollArea?.scrollHeight,viewportHeight:window.innerHeight},timestamp:Date.now(),hypothesisId:'A,C,D'}
-        console.log('[DEBUG]', logData1)
-        fetch('http://127.0.0.1:7245/ingest/9f2f0b8a-db6a-426d-9ac3-9010094f390a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(logData1)}).catch(()=>{});
-        const viewport = scrollArea?.querySelector('[data-slot="scroll-area-viewport"]') as HTMLElement
-        const logData2 = {location:'settings-modal.tsx:useEffect',message:'Viewport dimensions',data:{viewportOffsetHeight:viewport?.offsetHeight,viewportScrollHeight:viewport?.scrollHeight,viewportComputedHeight:viewport ? getComputedStyle(viewport).height : null,viewportOverflowY:viewport ? getComputedStyle(viewport).overflowY : null,viewportOverflowX:viewport ? getComputedStyle(viewport).overflowX : null,scrollAreaComputedHeight:scrollArea ? getComputedStyle(scrollArea).height : null,scrollAreaOverflow:scrollArea ? getComputedStyle(scrollArea).overflow : null,viewportStyle:viewport?.getAttribute('style')},timestamp:Date.now(),hypothesisId:'E,F,G'}
-        console.log('[DEBUG]', logData2)
-        fetch('http://127.0.0.1:7245/ingest/9f2f0b8a-db6a-426d-9ac3-9010094f390a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(logData2)}).catch(()=>{});
-      }, 100)
-    }
-  }, [open])
-  // #endregion
-  const [showApiKey, setShowApiKey] = useState(false)
+const [showApiKey, setShowApiKey] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -82,8 +64,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* #region agent log */}
-        <div ref={scrollAreaRef} className="flex-1 min-h-0 overflow-y-auto -mx-6 px-6">
+        <div className="flex-1 min-h-0 overflow-y-auto -mx-6 px-6 scrollbar-styled">
           <div className="space-y-6 py-2">
           {/* Account Section */}
           <div className="space-y-4">
