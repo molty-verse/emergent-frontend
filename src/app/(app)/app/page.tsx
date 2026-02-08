@@ -82,8 +82,10 @@ function StatusIndicator({
   }
 
   const config = statusConfig[status]
-  const dotSize = size === 'large' ? 'w-4 h-4' : 'w-3 h-3'
-  const borderWidth = size === 'large' ? 'border-[3px]' : 'border-2'
+  // Size in pixels for the dot
+  const dotPx = size === 'large' ? 16 : 12
+  const borderPx = size === 'large' ? 3 : 2
+  const totalSize = dotPx + (borderPx * 2)
 
   const triggerAnimation = () => {
     if (timeoutRef.current) {
@@ -120,25 +122,28 @@ function StatusIndicator({
       onMouseEnter={triggerAnimation}
     >
       <div 
-        className={`
-          flex items-center rounded-full transition-all duration-300 ease-out overflow-hidden
-          ${borderWidth}
-          ${isExpanded ? 'pr-2 pl-1' : 'pr-0 pl-0'}
-        `}
+        className="flex items-center rounded-full transition-all duration-300 ease-out overflow-hidden"
         style={{ 
+          height: totalSize,
+          borderWidth: borderPx,
           borderColor,
           backgroundColor: isExpanded ? borderColor : 'transparent',
+          paddingLeft: isExpanded ? 2 : 0,
+          paddingRight: isExpanded ? 8 : 0,
         }}
       >
-        <div className={`${dotSize} rounded-full ${config.color} flex-shrink-0 ${status === 'booting' ? 'animate-pulse' : ''}`} />
+        <div 
+          className={`rounded-full ${config.color} flex-shrink-0 ${status === 'booting' ? 'animate-pulse' : ''}`}
+          style={{ width: dotPx, height: dotPx }}
+        />
         <div 
           className={`
-            overflow-hidden transition-all duration-300 ease-out
+            overflow-hidden transition-all duration-300 ease-out flex items-center
             ${isExpanded ? 'max-w-[60px] ml-1.5 opacity-100' : 'max-w-0 ml-0 opacity-0'}
           `}
         >
           {showText && (
-            <span className={`text-[10px] font-medium font-[family-name:var(--font-body)] whitespace-nowrap ${config.textColor}`}>
+            <span className={`text-[10px] font-semibold font-[family-name:var(--font-body)] whitespace-nowrap leading-none ${config.textColor}`}>
               {config.text}
             </span>
           )}
@@ -192,11 +197,31 @@ export default function AppPage() {
             {/* Sidebar Header */}
             <div className="p-4 flex items-center justify-between">
               {!sidebarCollapsed && (
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/[0.08]">
-                    <Image src="/moltys/molty-orange.png" alt="Moltyverse" width={32} height={32} className="w-full h-full object-cover" />
+                <div className="flex items-center gap-2.5">
+                  {/* Logo Icon */}
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#daa06d] to-[#c4846a] flex items-center justify-center shadow-[0_2px_8px_rgba(218,160,109,0.3)]">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="6" fill="#151816" fillOpacity="0.9"/>
+                      <ellipse cx="12" cy="20" rx="8" ry="4" fill="#151816" fillOpacity="0.6"/>
+                      <circle cx="10" cy="7" r="1.5" fill="#f0ebe4"/>
+                      <circle cx="14" cy="7" r="1.5" fill="#f0ebe4"/>
+                      <path d="M10 10 Q12 12 14 10" stroke="#f0ebe4" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+                    </svg>
                   </div>
-                  <span className="font-[family-name:var(--font-display)] font-semibold text-[#f0ebe4]">Moltys</span>
+                  <span className="font-[family-name:var(--font-fraunces)] text-lg font-medium text-[#f0ebe4] tracking-tight">
+                    Moltyverse
+                  </span>
+                </div>
+              )}
+              {sidebarCollapsed && (
+                <div className="mx-auto w-8 h-8 rounded-lg bg-gradient-to-br from-[#daa06d] to-[#c4846a] flex items-center justify-center shadow-[0_2px_8px_rgba(218,160,109,0.3)]">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="6" fill="#151816" fillOpacity="0.9"/>
+                    <ellipse cx="12" cy="20" rx="8" ry="4" fill="#151816" fillOpacity="0.6"/>
+                    <circle cx="10" cy="7" r="1.5" fill="#f0ebe4"/>
+                    <circle cx="14" cy="7" r="1.5" fill="#f0ebe4"/>
+                    <path d="M10 10 Q12 12 14 10" stroke="#f0ebe4" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+                  </svg>
                 </div>
               )}
               <Button 
