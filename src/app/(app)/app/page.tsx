@@ -21,9 +21,12 @@ import {
   MessageSquare,
   Users,
   Key,
-  FileText,
   Power,
+  Check,
+  X,
 } from 'lucide-react'
+import { SettingsModal } from '@/components/settings-modal'
+import { ShareMoltyModal } from '@/components/share-molty-modal'
 
 // Status types: 'online' | 'booting' | 'offline'
 type MoltyStatus = 'online' | 'booting' | 'offline'
@@ -72,6 +75,7 @@ function StatusIndicator({
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showText, setShowText] = useState(false)
+  const [animationKey, setAnimationKey] = useState(0)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const prevStatusRef = useRef(status)
 
@@ -99,13 +103,22 @@ function StatusIndicator({
     }, 3000)
   }
 
-  // Trigger animation on status change
+  // Trigger animation on status change - this is a valid pattern for responding to prop changes
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (prevStatusRef.current !== status) {
-      triggerAnimation()
       prevStatusRef.current = status
+      setAnimationKey(k => k + 1)
     }
   }, [status])
+
+  // Run animation when key changes
+  useEffect(() => {
+    if (animationKey > 0) {
+      triggerAnimation()
+    }
+  }, [animationKey])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -168,6 +181,11 @@ export default function AppPage() {
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
   const [messageInput, setMessageInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [isEditingDescription, setIsEditingDescription] = useState(false)
+  const [editedDescription, setEditedDescription] = useState('')
+  const [showDeleteMoltyConfirm, setShowDeleteMoltyConfirm] = useState(false)
 
   const selectedMolty = moltys.find(m => m.id === selectedMoltyId) || moltys[0]
 
@@ -190,6 +208,34 @@ export default function AppPage() {
         ))
       }, 2000)
     }
+  }
+
+  const startEditingDescription = () => {
+    setEditedDescription(selectedMolty.description)
+    setIsEditingDescription(true)
+  }
+
+  const saveDescription = () => {
+    setMoltys(prev => prev.map(m => 
+      m.id === selectedMoltyId ? { ...m, description: editedDescription } : m
+    ))
+    setIsEditingDescription(false)
+  }
+
+  const cancelEditingDescription = () => {
+    setIsEditingDescription(false)
+    setEditedDescription('')
+  }
+
+  const handleDeleteMolty = () => {
+    // Remove the molty from the list
+    setMoltys(prev => prev.filter(m => m.id !== selectedMoltyId))
+    // Select the first remaining molty
+    const remainingMoltys = moltys.filter(m => m.id !== selectedMoltyId)
+    if (remainingMoltys.length > 0) {
+      setSelectedMoltyId(remainingMoltys[0].id)
+    }
+    setShowDeleteMoltyConfirm(false)
   }
 
   return (
@@ -334,6 +380,7 @@ export default function AppPage() {
               </Button>
               <Button 
                 variant="ghost" 
+                onClick={() => setSettingsOpen(true)}
                 className={`text-[#686460] hover:text-[#f0ebe4] hover:bg-white/[0.04] ${
                   sidebarCollapsed ? 'w-10 h-10 p-0' : 'flex-1 justify-start'
                 }`}
@@ -473,7 +520,10 @@ export default function AppPage() {
                       <Power className="w-3.5 h-3.5" />
                     </Button>
                   </div>
-                  <Button className="w-full bg-[#daa06d]/10 hover:bg-[#daa06d]/20 text-[#daa06d] border border-[#daa06d]/20 hover:border-[#daa06d]/30 transition-all rounded-xl h-10 font-[family-name:var(--font-body)] font-medium">
+                  <Button 
+                    onClick={() => setShareModalOpen(true)}
+                    className="w-full bg-[#daa06d]/10 hover:bg-[#daa06d]/20 text-[#daa06d] border border-[#daa06d]/20 hover:border-[#daa06d]/30 transition-all rounded-xl h-10 font-[family-name:var(--font-body)] font-medium"
+                  >
                     Share Molty
                   </Button>
                 </div>
@@ -512,14 +562,49 @@ export default function AppPage() {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-xs font-semibold text-[#686460] uppercase tracking-wider font-[family-name:var(--font-body)]">Description</h4>
-                    <Button variant="ghost" size="icon" className="w-6 h-6 text-[#686460] hover:text-[#f0ebe4] hover:bg-white/[0.04]">
-                      <Pencil className="w-3 h-3" />
-                    </Button>
+                    {isEditingDescription ? (
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={saveDescription}
+                          className="w-6 h-6 text-[#8b9a72] hover:text-[#8b9a72] hover:bg-[#8b9a72]/10"
+                        >
+                          <Check className="w-3 h-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={cancelEditingDescription}
+                          className="w-6 h-6 text-red-400/70 hover:text-red-400 hover:bg-red-400/10"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={startEditingDescription}
+                        className="w-6 h-6 text-[#686460] hover:text-[#f0ebe4] hover:bg-white/[0.04]"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                    )}
                   </div>
                   <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
-                    <p className="text-sm text-[#9a958c] font-[family-name:var(--font-body)] leading-relaxed">
-                      {selectedMolty.description}
-                    </p>
+                    {isEditingDescription ? (
+                      <Textarea
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        className="min-h-[80px] resize-none border-0 bg-transparent p-0 text-sm text-[#f0ebe4] font-[family-name:var(--font-body)] leading-relaxed focus-visible:ring-0 focus-visible:ring-offset-0"
+                        autoFocus
+                      />
+                    ) : (
+                      <p className="text-sm text-[#9a958c] font-[family-name:var(--font-body)] leading-relaxed">
+                        {selectedMolty.description}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -543,28 +628,60 @@ export default function AppPage() {
                     <Key className="w-4 h-4 text-[#686460]" />
                     <span className="text-sm text-[#9a958c] font-[family-name:var(--font-body)]">Secrets manager</span>
                   </button>
-                  
-                  <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.04] transition-all">
-                    <FileText className="w-4 h-4 text-[#686460]" />
-                    <span className="text-sm text-[#9a958c] font-[family-name:var(--font-body)]">Soul file</span>
-                  </button>
                 </div>
 
                 <Separator className="bg-white/[0.06] my-6" />
 
                 {/* Danger Zone */}
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-red-400/70 hover:text-red-400 hover:bg-red-400/10"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  <span className="font-[family-name:var(--font-body)]">Delete Molty</span>
-                </Button>
+                {!showDeleteMoltyConfirm ? (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setShowDeleteMoltyConfirm(true)}
+                    className="w-full justify-start text-red-400/70 hover:text-red-400 hover:bg-red-400/10"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    <span className="font-[family-name:var(--font-body)]">Delete Molty</span>
+                  </Button>
+                ) : (
+                  <div className="p-4 rounded-xl bg-red-400/10 border border-red-400/20 space-y-3">
+                    <p className="text-sm text-red-300 font-[family-name:var(--font-body)]">
+                      Are you sure you want to delete <span className="font-semibold">{selectedMolty.name}</span>? This action cannot be undone.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowDeleteMoltyConfirm(false)}
+                        className="flex-1 text-[#9a958c] hover:text-[#f0ebe4] hover:bg-white/[0.04]"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleDeleteMolty}
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </div>
         </div>
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+
+      {/* Share Molty Modal */}
+      <ShareMoltyModal 
+        open={shareModalOpen} 
+        onOpenChange={setShareModalOpen}
+        moltyName={selectedMolty.name}
+        availableMoltys={moltys.map(m => ({ id: m.id, name: m.name, image: m.image }))}
+        currentMoltyId={selectedMoltyId}
+      />
     </div>
   )
 }
