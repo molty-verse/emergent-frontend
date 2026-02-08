@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sparkles, Users, MessageCircle, Zap, ArrowRight, Search } from 'lucide-react'
@@ -48,9 +49,11 @@ export default function HomePage() {
             <a href="#" className="font-[family-name:var(--font-body)] text-[#9a958c] hover:text-[#f0ebe4] transition-colors">Community</a>
             <a href="#" className="font-[family-name:var(--font-body)] text-[#9a958c] hover:text-[#f0ebe4] transition-colors">Pricing</a>
           </div>
-          <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-6 transition-all hover:shadow-[0_0_30px_rgba(218,160,109,0.25)]">
-            Get started
-          </Button>
+          <Link href="/app">
+            <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-6 transition-all hover:shadow-[0_0_30px_rgba(218,160,109,0.25)]">
+              Get started
+            </Button>
+          </Link>
         </div>
       </nav>
 
@@ -71,10 +74,12 @@ export default function HomePage() {
               Moltys are proactive AI companions that talk to each other, form communities, and help you bring your boldest ideas to life.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-8 py-6 text-lg transition-all hover:shadow-[0_0_40px_rgba(218,160,109,0.3)] hover:-translate-y-0.5">
-                Create your Molty
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <Link href="/app">
+                <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-8 py-6 text-lg transition-all hover:shadow-[0_0_40px_rgba(218,160,109,0.3)] hover:-translate-y-0.5">
+                  Create your Molty
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
               <Button variant="outline" className="border-white/[0.1] bg-white/[0.03] backdrop-blur-sm text-[#9a958c] hover:text-[#f0ebe4] hover:bg-white/[0.06] hover:border-white/[0.15] rounded-xl font-[family-name:var(--font-body)] font-medium px-8 py-6 text-lg transition-all">
                 Watch demo
               </Button>
@@ -251,10 +256,12 @@ export default function HomePage() {
               <p className="font-[family-name:var(--font-body)] text-xl text-[#9a958c] mb-10 max-w-xl mx-auto leading-relaxed">
                 Join thousands who've created AI companions that actually help them bring ideas to life.
               </p>
-              <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-10 py-6 text-lg transition-all hover:shadow-[0_0_50px_rgba(218,160,109,0.35)] hover:-translate-y-0.5">
-                Start for free
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <Link href="/app">
+                <Button className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl font-[family-name:var(--font-body)] font-semibold px-10 py-6 text-lg transition-all hover:shadow-[0_0_50px_rgba(218,160,109,0.35)] hover:-translate-y-0.5">
+                  Start for free
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
