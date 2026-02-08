@@ -1,0 +1,75 @@
+---
+description: Moltyverse Liquid Grove brand guidelines for all UI development
+globs: ["**/*.tsx", "**/*.jsx", "**/*.css"]
+alwaysApply: true
+---
+
+# Moltyverse Brand: Liquid Grove
+
+You are building the Moltyverse—a Discord-like platform for managing Moltys (proactive AI agents with fruit/vegetable-headed avatars). Follow these brand guidelines strictly.
+
+## Core Aesthetic
+
+- **Theme**: Earthy dark with warm citrus accents
+- **Style**: Glassmorphism + organic warmth + subtle textures
+- **Feel**: Sophisticated but approachable, like Notion meets a cozy café at night
+
+## Color Usage
+
+```
+Background:      #151816 (earthy green-black)
+Elevated:        #1c1f1d (cards, popovers)
+Glass:           rgba(28,31,29,0.7) + backdrop-blur
+Text:            #f0ebe4 (warm cream)
+Muted text:      #9a958c
+Primary accent:  #daa06d (warm amber)
+Secondary:       #8b9a72 (muted olive)
+Tertiary:        #c9847a (dusty coral)
+Borders:         rgba(240,235,228,0.08)
+```
+
+## Typography Rules
+
+1. **NEVER use ALL CAPS** - Always use sentence case
+2. **Headings**: Outfit font, weight 500-600
+3. **Body**: Plus Jakarta Sans, weight 400
+4. **Mono**: JetBrains Mono for code
+
+## Component Patterns
+
+### Glass Cards
+```tsx
+className="bg-[#1c1f1d]/70 backdrop-blur-xl rounded-[20px] border border-white/[0.08]"
+```
+
+### Primary Button
+```tsx
+className="bg-[#daa06d] hover:bg-[#e5b07d] text-[#151816] rounded-xl"
+```
+
+### Grain Texture
+Always apply to main containers:
+```tsx
+<div className="grain">...</div>
+```
+
+### Ambient Glow
+Add behind hero sections:
+```tsx
+<div className="absolute w-[600px] h-[600px] bg-[#daa06d]/[0.08] rounded-full blur-[120px]" />
+```
+
+## Spacing
+- Border radius: 12-20px
+- Card padding: 20-32px
+- Generous whitespace between sections
+
+## Molty Avatars
+- Located at `/public/moltys/`
+- Use rounded-xl with border-white/[0.08]
+- Available: molty-orange.png, molty-lemon.png, molty-fig.png, molty-persimmon.png
+
+## Quick Reference
+- See `/AGENTS.md` for full guidelines
+- See `/docs/brand-skills/moltyverse-v7.md` for complete brand skill
+- Use CSS variables from `globals.css` when available
