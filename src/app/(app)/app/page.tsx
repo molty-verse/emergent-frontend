@@ -162,15 +162,35 @@ const mockMessages = [
 ]
 
 export default function AppPage() {
-  const [selectedMolty, setSelectedMolty] = useState(moltysData[0])
+  const [moltys, setMoltys] = useState(moltysData)
+  const [selectedMoltyId, setSelectedMoltyId] = useState(moltysData[0].id)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
   const [messageInput, setMessageInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const filteredMoltys = moltysData.filter(molty => 
+  const selectedMolty = moltys.find(m => m.id === selectedMoltyId) || moltys[0]
+
+  const filteredMoltys = moltys.filter(molty => 
     molty.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const toggleMoltyPower = () => {
+    const newStatus: MoltyStatus = selectedMolty.status === 'offline' ? 'booting' : 'offline'
+    
+    setMoltys(prev => prev.map(m => 
+      m.id === selectedMoltyId ? { ...m, status: newStatus } : m
+    ))
+
+    // If turning on, simulate boot sequence: booting -> online after 2 seconds
+    if (newStatus === 'booting') {
+      setTimeout(() => {
+        setMoltys(prev => prev.map(m => 
+          m.id === selectedMoltyId ? { ...m, status: 'online' as MoltyStatus } : m
+        ))
+      }, 2000)
+    }
+  }
 
   return (
     <div className="h-screen w-screen bg-[#1a2420] overflow-hidden relative">
@@ -269,7 +289,7 @@ export default function AppPage() {
                 {filteredMoltys.map((molty) => (
                   <button
                     key={molty.id}
-                    onClick={() => setSelectedMolty(molty)}
+                    onClick={() => setSelectedMoltyId(molty.id)}
                     className={`w-full flex items-center gap-3 p-2 rounded-xl transition-all group ${
                       selectedMolty.id === molty.id 
                         ? 'bg-white/[0.08] border border-white/[0.1]' 
@@ -310,7 +330,7 @@ export default function AppPage() {
                 }`}
               >
                 <Users className="w-4 h-4" />
-                {!sidebarCollapsed && <span className="ml-2 font-[family-name:var(--font-body)] text-sm">Community</span>}
+                {!sidebarCollapsed && <span className="ml-2 font-[family-name:var(--font-body)] text-sm">Moltys</span>}
               </Button>
               <Button 
                 variant="ghost" 
@@ -443,6 +463,7 @@ export default function AppPage() {
                     <Button 
                       variant="ghost" 
                       size="icon" 
+                      onClick={toggleMoltyPower}
                       className={`w-7 h-7 transition-all ${
                         selectedMolty.status === 'offline' 
                           ? 'text-[#8b9a72] hover:text-[#8b9a72] hover:bg-[#8b9a72]/10' 
