@@ -556,18 +556,18 @@ export default function AppPage() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          onClick={saveDescription}
-                          className="w-6 h-6 text-[#8b9a72] hover:text-[#8b9a72] hover:bg-[#8b9a72]/10"
-                        >
-                          <Check className="w-3 h-3" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
                           onClick={cancelEditingDescription}
                           className="w-6 h-6 text-red-400/70 hover:text-red-400 hover:bg-red-400/10"
                         >
                           <X className="w-3 h-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={saveDescription}
+                          className="w-6 h-6 text-[#8b9a72] hover:text-[#8b9a72] hover:bg-[#8b9a72]/10"
+                        >
+                          <Check className="w-3 h-3" />
                         </Button>
                       </div>
                     ) : (
