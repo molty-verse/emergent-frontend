@@ -387,7 +387,7 @@ export default function AppPage() {
           {/* Chat Area */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Chat Header */}
-            <div className="h-16 border-b border-white/[0.06] bg-[#151816] px-6 flex items-center justify-between">
+            <div className="h-16 min-h-16 flex-shrink-0 border-b border-white/[0.06] bg-[#151816] px-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/[0.08]">
